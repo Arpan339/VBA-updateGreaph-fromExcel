@@ -1,0 +1,59 @@
+
+Private Sub FilePathTextBox_Change()
+
+End Sub
+
+Private Sub UserForm_Initialize()
+    ' This event handler runs when the UserForm is initialized
+    Dim xlApp As Excel.Application
+    Dim xlBook As Excel.Workbook
+    
+    ' Set up the FileDialog box
+    Dim fileDialog As fileDialog
+    Set fileDialog = Application.fileDialog(msoFileDialogFilePicker)
+    fileDialog.Filters.Clear
+    fileDialog.Filters.Add "Excel files", "*.xlsx; *.xlsm; *.xls"
+    fileDialog.AllowMultiSelect = False
+    
+    ' Display the FileDialog box and get the selected file path
+    If fileDialog.Show = -1 Then
+        FilePathTextBox.Value = fileDialog.SelectedItems(1)
+        
+        ' Open the Excel workbook
+        On Error Resume Next ' Error handling
+        Set xlApp = New Excel.Application
+        Set xlBook = xlApp.Workbooks.Open(FilePathTextBox)
+        On Error GoTo 0 ' Turn off error handling
+        
+        If Not xlBook Is Nothing Then
+            ' Do something with xlBook if needed
+            
+            ' Close the Excel workbook without saving changes
+            xlBook.Close False
+            Set xlBook = Nothing
+            Set xlApp = Nothing
+        Else
+            MsgBox "Unable to open the selected Excel file.", vbExclamation
+        End If
+    Else
+        ' No file selected, close the UserForm
+        Unload Me
+    End If
+End Sub
+
+
+Private Sub CommandButton1_Click()
+
+'This event handler runs when the Run button is clicked
+        Dim Path As String
+        Path = Me.FilePathTextBox.Value
+        
+        'Call the main code sub and pass the selected sheet name
+        UpdateGraphPersonal (Path)
+    MsgBox "The PPT has been updated", vbOKOnly, "Completed!"
+
+End Sub
+
+Private Sub CommandButton2_Click()
+Unload Me
+End Sub
