@@ -1,0 +1,55 @@
+Sub UpdateGraphPersonal(sheetPath As String)
+Dim pptPresentation9 As Presentation
+Dim pptslide9 As Slide
+Dim pptShape9 As Shape
+Dim pptChartData9 As ChartData
+Dim pptWorkbook9 As Workbook
+Dim pptWorksheet9 As Worksheet
+Dim dataColumns9 As Range
+Dim dataColumn9 As Range
+Dim pasteRange9 As Range
+Dim i As Integer
+Dim newDate1
+
+
+   'Set the PowerPoint presentation
+    Set pptPresentation9 = ActivePresentation
+    
+        'Loop through all slides in the presentation
+        For Each pptslide9 In pptPresentation9.Slides
+            'Check if the slide number is 4 or 5
+            If pptslide9.SlideNumber = 2 Or pptslide9.SlideNumber = 3 Then
+            
+            'Loop through all shapes in Slide 4
+            For Each pptShape9 In pptslide9.Shapes
+                'Check if the shape is a chart
+                If pptShape9.HasChart Then
+                    'set the chart data
+                    Set pptChartData9 = pptShape9.Chart.ChartData
+                    'Open the Excel file with the data
+                    Set pptWorkbook9 = Workbooks.Open(sheetPath)
+                    'Specify the sheet name containing the data for the graph
+                    Set pptWorksheet9 = pptWorkbook9.Sheets("Sheet1")
+                    'Set the data range for the chart (replace A, E, F, J with your actual columns)
+                    Set dataColumns9 = pptWorksheet9.Range("A:A, B:B")
+                    'Clear the existing data in the chart data sheet
+                    pptChartData9.Workbook.Sheets(1).Cells.Clear
+                    'Add the new heading
+                   
+                    'Loop through each column in dataColumns and assign values directly
+                    i = 1
+                    For Each dataColumn9 In dataColumns9.Columns
+                    Set pasteRange9 = pptChartData9.Workbook.Sheets(1).Cells(1, i)
+                    pasteRange9.Resize(dataColumn9.Rows.Count, 1).Value = dataColumn9.Value
+                    i = i + 1
+                    Next dataColumn9
+                    pptChartData9.Workbook.Close SaveChanges:=True
+            
+                'Save and close the updated workbook
+                End If
+            Next pptShape9
+            End If
+        Next pptslide9
+    
+
+End Sub
